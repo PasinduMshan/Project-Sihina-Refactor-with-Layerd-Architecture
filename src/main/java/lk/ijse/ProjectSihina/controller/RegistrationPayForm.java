@@ -103,11 +103,8 @@ public class RegistrationPayForm implements Initializable {
 
     private GuardianDto guardianDto;
 
-    private Object year;
-    private Object month;
-    private Object DATE;
-
     private String Subject;
+
     private String Type = "RegistrationFee";
 
     @Override

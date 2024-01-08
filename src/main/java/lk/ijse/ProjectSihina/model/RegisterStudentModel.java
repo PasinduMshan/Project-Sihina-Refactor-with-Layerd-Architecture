@@ -26,7 +26,6 @@ public class RegisterStudentModel {
                         boolean isSaveRegistration = saveDetailRegistration(studentDto, payDto);
                         if (isSaveRegistration) {
                             connection.commit();
-
                             return true;
                         } else {
                             connection.rollback();
