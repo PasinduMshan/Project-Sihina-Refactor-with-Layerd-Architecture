@@ -87,7 +87,7 @@ public class AttendanceDAOImpl implements AttendanceDAO {
                     resultSet.getString(4),
                     resultSet.getString(5),
                     resultSet.getDate(6).toLocalDate(),
-                    resultSet.getTime(4).toLocalTime(),
+                    resultSet.getTime(7).toLocalTime(),
                     resultSet.getString(8)
             ));
         }
