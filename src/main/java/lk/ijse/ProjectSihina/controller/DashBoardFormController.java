@@ -19,18 +19,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lk.ijse.ProjectSihina.User.UserConnection;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.DashBoardBO;
 import lk.ijse.ProjectSihina.dto.DashBordScheduleDto;
 import lk.ijse.ProjectSihina.dto.Tm.DashBoardScheduleTm;
-import lk.ijse.ProjectSihina.model.DashBordModel;
+
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
 
 public class DashBoardFormController {
@@ -79,6 +78,8 @@ public class DashBoardFormController {
     @FXML
     private TableView<DashBoardScheduleTm> tblSchedule;
 
+    DashBoardBO dashBoardBO = (DashBoardBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.DASHBOARD);
+
     public void initialize() {
         setDateandTime();
         setUserName();
@@ -103,7 +104,7 @@ public class DashBoardFormController {
 
         try {
             LocalDate date = LocalDate.parse(lblDate.getText());
-            List<DashBordScheduleDto> dtoList = DashBordModel.getTodaySchedule(date);
+            List<DashBordScheduleDto> dtoList = dashBoardBO.getTodaySchedule(date);
 
             for (DashBordScheduleDto dto : dtoList) {
                 obList.add(new DashBoardScheduleTm(
@@ -114,7 +115,8 @@ public class DashBoardFormController {
                         dto.getType()
                 ));
             }
-            List<DashBordScheduleDto> todayExams = DashBordModel.getTodayExams(date);
+
+            List<DashBordScheduleDto> todayExams = dashBoardBO.getTodayExams(date);
 
             for (DashBordScheduleDto dtoEx : todayExams) {
                 obList.add(new DashBoardScheduleTm(
@@ -135,7 +137,7 @@ public class DashBoardFormController {
 
     private void getSubjectCount() {
         try {
-            String subjectCount = DashBordModel.getSubjectCount();
+            String subjectCount = dashBoardBO.getSubjectCount();
             lblSubjectsCount.setText(subjectCount);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -144,7 +146,7 @@ public class DashBoardFormController {
 
     private void getTeacherCount() {
         try {
-            String teacherCount = DashBordModel.getTeacherCount();
+            String teacherCount = dashBoardBO.getTeacherCount();
             lblTeachersCount.setText(teacherCount);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -153,7 +155,7 @@ public class DashBoardFormController {
 
     private void getStudentCount() {
         try {
-            String studentCount = DashBordModel.getStudentCount();
+            String studentCount = dashBoardBO.getStudentCount();
             lblStudentCount.setText(studentCount);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -162,8 +164,9 @@ public class DashBoardFormController {
 
     private void setTodayIncome() {
         LocalDate date = LocalDate.parse(lblDate.getText());
+
         try {
-            String sumOfAmount = DashBordModel.getSumOfAmount(date);
+            String sumOfAmount = dashBoardBO.getSumOfAmount(date);
             lblTodayIncome.setText(sumOfAmount);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -185,7 +188,6 @@ public class DashBoardFormController {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> updateTime()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-
         lblDate.setText(String.valueOf(LocalDate.now()));
     }
     @FXML

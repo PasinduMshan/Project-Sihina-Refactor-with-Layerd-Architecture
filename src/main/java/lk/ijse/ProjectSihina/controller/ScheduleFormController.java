@@ -11,18 +11,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.Other.Days;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.ScheduleBO;
 import lk.ijse.ProjectSihina.db.DbConnection;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.ScheduleDto;
 import lk.ijse.ProjectSihina.dto.SubjectDto;
 import lk.ijse.ProjectSihina.dto.TeacherDto;
 import lk.ijse.ProjectSihina.dto.Tm.ScheduleTm;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.ScheduleModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -80,6 +79,8 @@ public class ScheduleFormController implements Initializable {
     @FXML
     private JFXTextField txtStartTime;
 
+    ScheduleBO scheduleBO = (ScheduleBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SCHEDULE);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -105,7 +106,7 @@ public class ScheduleFormController implements Initializable {
     private void loadAllTeacher() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<TeacherDto> dtoList = ScheduleModel.getAllTeacher();
+            List<TeacherDto> dtoList = scheduleBO.getAllTeacher();
 
             for (TeacherDto dto : dtoList) {
                 obList.add(dto.getName());
@@ -119,7 +120,7 @@ public class ScheduleFormController implements Initializable {
     private void loadAllSubject() {
         ObservableList<String> obList = FXCollections.observableArrayList();
         try {
-            List<SubjectDto> SubList = ScheduleModel.getAllSubject();
+            List<SubjectDto> SubList = scheduleBO.getAllSubject();
 
             for (SubjectDto dto : SubList) {
                 obList.add(dto.getSubject());
@@ -134,7 +135,7 @@ public class ScheduleFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = scheduleBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -148,7 +149,7 @@ public class ScheduleFormController implements Initializable {
     private void loadAllSchedule() {
         ObservableList<ScheduleTm> obList = FXCollections.observableArrayList();
         try {
-            List<ScheduleDto> dtoList = ScheduleModel.getAllSchedule();
+            List<ScheduleDto> dtoList = scheduleBO.getAllSchedule();
 
             for (ScheduleDto dto : dtoList) {
                 obList.add(new ScheduleTm(
@@ -184,6 +185,7 @@ public class ScheduleFormController implements Initializable {
 
         LocalTime StartTime = LocalTime.parse(txtStartTime.getText());
         String startTime = String.valueOf(StartTime);
+
         boolean matches = Pattern.matches("[0-9:]+", startTime);
         if (!matches) {
             new Alert(Alert.AlertType.ERROR,"Invalid Time!!").show();
@@ -192,6 +194,7 @@ public class ScheduleFormController implements Initializable {
 
         LocalTime EndTime = LocalTime.parse(txtEndTime.getText());
         String endTime = String.valueOf(StartTime);
+
         boolean matches1 = Pattern.matches("[0-9:]+", endTime);
         if (!matches1) {
             new Alert(Alert.AlertType.ERROR,"Invalid Time!!").show();
@@ -207,7 +210,7 @@ public class ScheduleFormController implements Initializable {
         ScheduleDto dto = new ScheduleDto(classValue, Subject, teacher, days, StartTime, EndTime);
 
         try {
-            boolean isAdd = ScheduleModel.AddSchedule(dto);
+            boolean isAdd = scheduleBO.AddSchedule(dto);
             if (isAdd) {
                 new Alert(Alert.AlertType.INFORMATION," Schedule Add Success!!!").showAndWait();
                 clearField();
@@ -232,7 +235,7 @@ public class ScheduleFormController implements Initializable {
         ScheduleDto dto = new ScheduleDto(classValue, Subject, teacher, days, StartTime, EndTime);
 
         try {
-            boolean isDelete = ScheduleModel.DeleteShedule(dto);
+            boolean isDelete = scheduleBO.DeleteSchedule(dto);
             if (isDelete) {
                 new Alert(Alert.AlertType.INFORMATION, "Delete Success!!!").showAndWait();
                 clearField();

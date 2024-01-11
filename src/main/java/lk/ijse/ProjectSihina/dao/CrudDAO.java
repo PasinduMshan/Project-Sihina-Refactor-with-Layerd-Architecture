@@ -1,6 +1,7 @@
 package lk.ijse.ProjectSihina.dao;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface CrudDAO<T> extends SuperDAO {
@@ -12,7 +13,7 @@ public interface CrudDAO<T> extends SuperDAO {
 
     T search(String Id) throws SQLException;
 
-    List<T> getAll() throws SQLException;
+    ArrayList<T> getAll() throws SQLException;
 
     String generateId() throws SQLException;
 

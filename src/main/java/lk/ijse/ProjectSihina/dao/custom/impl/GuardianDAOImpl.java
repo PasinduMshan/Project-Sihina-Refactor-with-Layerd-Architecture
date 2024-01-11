@@ -7,7 +7,6 @@ import lk.ijse.ProjectSihina.entity.Guardian;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GuardianDAOImpl implements GuardianDAO {
     @Override
@@ -116,7 +115,7 @@ public class GuardianDAOImpl implements GuardianDAO {
     }
 
     @Override
-    public List<Guardian> getAll() throws SQLException {
+    public ArrayList<Guardian> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Guardian");
 
         ArrayList<Guardian> GuardianList = new ArrayList<>();

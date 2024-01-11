@@ -12,16 +12,16 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.TeacherBO;
 import lk.ijse.ProjectSihina.db.DbConnection;
 import lk.ijse.ProjectSihina.dto.TeacherDto;
 import lk.ijse.ProjectSihina.dto.Tm.TeacherTm;
-import lk.ijse.ProjectSihina.model.teacherModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -84,6 +84,8 @@ public class TeacherFormController implements Initializable {
 
     private File selectedImageFile;
 
+    TeacherBO teacherBO = (TeacherBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.TEACHER);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -108,7 +110,7 @@ public class TeacherFormController implements Initializable {
 
     private void generateTeacherId() {
         try {
-            String id = teacherModel.generateTeacherId();
+            String id = teacherBO.generateTeacherId();
             txtID.setText(id);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -119,7 +121,7 @@ public class TeacherFormController implements Initializable {
         ObservableList<TeacherTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<TeacherDto> dtoList = teacherModel.getAllTeachers();
+            List<TeacherDto> dtoList = teacherBO.getAllTeachers();
 
             for (TeacherDto dto : dtoList ) {
                 obList.add(new TeacherTm(
@@ -165,7 +167,7 @@ public class TeacherFormController implements Initializable {
             TeacherDto dto = new TeacherDto(teacherId, teacherName, address, email, subjects, contactNo, image);
 
             try {
-                boolean isAdded = teacherModel.addTeacher(dto);
+                boolean isAdded = teacherBO.addTeacher(dto);
 
                 if (isAdded) {
                     new Alert(Alert.AlertType.CONFIRMATION, "Teacher save success!!!").showAndWait();
@@ -239,7 +241,7 @@ public class TeacherFormController implements Initializable {
         }
 
         try {
-            boolean isDeleted = teacherModel.deleteTeacher(id);
+            boolean isDeleted = teacherBO.deleteTeacher(id);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Teacher Delete Success!!!").showAndWait();
@@ -274,7 +276,7 @@ public class TeacherFormController implements Initializable {
             TeacherDto dto = new TeacherDto(teacherId, teacherName, address, email, subjects, contactNo, image);
 
             try {
-                boolean isUpdated = teacherModel.updateTeacher(dto);
+                boolean isUpdated = teacherBO.updateTeacher(dto);
 
                 if (isUpdated) {
                     new Alert(Alert.AlertType.INFORMATION, "Update Success!!!").showAndWait();
@@ -329,7 +331,7 @@ public class TeacherFormController implements Initializable {
         }
 
         try {
-            TeacherDto dto = teacherModel.searchTeacher(id);
+            TeacherDto dto = teacherBO.searchTeacher(id);
 
             if (dto != null) {
                 txtID.setText(dto.getId());
@@ -359,7 +361,7 @@ public class TeacherFormController implements Initializable {
                 .addListener((observableValue, classTm, t1) -> {
                     //txtID.setText(t1.getID());
                     try {
-                        TeacherDto dto = teacherModel.searchTeacher(t1.getID());
+                        TeacherDto dto = teacherBO.searchTeacher(t1.getID());
                         if (dto != null) {
                             txtID.setText(dto.getId());
                             txtNameWithInitials.setText(dto.getName());

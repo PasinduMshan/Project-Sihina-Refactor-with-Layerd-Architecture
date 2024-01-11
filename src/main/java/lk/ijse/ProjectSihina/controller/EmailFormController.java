@@ -14,9 +14,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.EmailBO;
 import lk.ijse.ProjectSihina.dto.ClassDto;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.MailModel;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -50,6 +50,7 @@ public class EmailFormController implements Initializable {
     private List<String> allEmailsByClass;
     private List<String> allEmailFromStudentOrTeacher;
 
+    EmailBO emailBO = (EmailBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EMAIL);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,7 +69,7 @@ public class EmailFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = emailBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -81,8 +82,13 @@ public class EmailFormController implements Initializable {
 
     private void getAllEmailTeacherOrStudent() {
         String TeachOrStu = cmbStuOrTea.getValue();
+
         try {
-            allEmailFromStudentOrTeacher = MailModel.getAllEmailFromStudentOrTeacher(TeachOrStu);
+            if (TeachOrStu.equals("Teacher")){
+                allEmailFromStudentOrTeacher = emailBO.getAllEmailFromTeacher(TeachOrStu);
+            } else {
+                allEmailFromStudentOrTeacher = emailBO.getAllEmailFromStudent(TeachOrStu);
+            }
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
@@ -93,7 +99,7 @@ public class EmailFormController implements Initializable {
         String  StuClass = cmbGrades.getValue();
 
         try {
-            allEmailsByClass = MailModel.getAllEmailsByClass(StuClass);
+            allEmailsByClass = emailBO.getAllEmailsByClass(StuClass);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }
@@ -112,6 +118,7 @@ public class EmailFormController implements Initializable {
     void btnSendOnAction(ActionEvent event) {
         System.out.println("Start");
         lblStatus.setText("sending...");
+
         Mail mail = new Mail(); // creating an instance of Mail class
         mail.setMsg(txtMessage.getText()); // email message
         mail.setSubject(txtSubjectInMail.getText()); // email subject

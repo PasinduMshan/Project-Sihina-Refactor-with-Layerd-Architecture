@@ -17,11 +17,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
-import lk.ijse.ProjectSihina.dto.SubjectDto;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.UserBO;
 import lk.ijse.ProjectSihina.dto.Tm.userTm;
 import lk.ijse.ProjectSihina.dto.UserDto;
-import lk.ijse.ProjectSihina.model.SignUpModel;
-import lk.ijse.ProjectSihina.model.SubjectModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -89,6 +88,7 @@ public class UserSettingController implements Initializable {
     @FXML
     private JFXTextField txtNICTOChange;
 
+    UserBO userBO = (UserBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.USER);
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -124,7 +124,7 @@ public class UserSettingController implements Initializable {
         ObservableList<userTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<UserDto> dtoList = SignUpModel.getAllUsers();
+            List<UserDto> dtoList = userBO.getAllUsers();
 
             for (UserDto dto : dtoList) {
                 obList.add(new userTm(
@@ -162,23 +162,29 @@ public class UserSettingController implements Initializable {
         boolean isValidate = validationCredentials(userNameNow, passwordNow);
         if (isValidate) {
             try {
-                boolean isMatchedNIC = SignUpModel.checkNIC(NIC);
+                boolean isMatchedNIC = userBO.checkNIC(NIC);
+
                 if (isMatchedNIC) {
-                    boolean isMatch = SignUpModel.checkCredentials(userNameNow, passwordNow, NIC);
+                    boolean isMatch = userBO.checkCredentials(userNameNow, passwordNow, NIC);
+
                     if (isMatch) {
                         String newUserName = txtNewUserName.getText();
                         String newPassword = txtNewPassword.getText();
                         boolean isValidatedNew = validationCredentials(newUserName, newPassword);
+
                         if (isValidatedNew) {
                             String confirmUserName = txtConfirmUserName.getText();
                             String confirmPassword = txtConfirmPassword.getText();
                             boolean isValidatedConfirm = validationCredentials(confirmUserName, confirmPassword);
+
                             if (isValidatedConfirm) {
                                 if (newUserName.equals(confirmUserName) && newPassword.equals(confirmPassword)) {
-                                    boolean ChangeCredentials = SignUpModel.updateCredentials(newUserName, newPassword, NIC);
+                                    boolean ChangeCredentials = userBO.updateCredentials(newUserName, newPassword, NIC);
+
                                     if (ChangeCredentials) {
                                         new Alert(Alert.AlertType.INFORMATION, "Change Credentials Success!!!").showAndWait();
                                         clearField();
+
                                     } else {
                                         new Alert(Alert.AlertType.ERROR, "Change Credentials Failed!!!").showAndWait();
                                     }
@@ -210,7 +216,7 @@ public class UserSettingController implements Initializable {
         }
 
         try {
-            boolean isDeleted = SignUpModel.deleteUser(UserId);
+            boolean isDeleted = userBO.deleteUser(UserId);
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"User Delete Success!!!").showAndWait();
                 loadAllUser();
@@ -241,7 +247,7 @@ public class UserSettingController implements Initializable {
         }
 
         try {
-            UserDto userDto = SignUpModel.searchUser(NIC);
+            UserDto userDto = userBO.searchUser(NIC);
             if (userDto != null) {
                 txtUserId.setText(userDto.getUserId());
                 txtFirstName.setText(userDto.getFirstName());
@@ -273,7 +279,7 @@ public class UserSettingController implements Initializable {
         if (isValidate) {
             UserDto userDto = new UserDto(UserId,FirstName,LastName,email,nic);
             try {
-                boolean isUpdated = SignUpModel.updateUser(userDto);
+                boolean isUpdated = userBO.updateUser(userDto);
                 if (isUpdated) {
                     new Alert(Alert.AlertType.INFORMATION,"User Update Success!!!").showAndWait();
                     loadAllUser();

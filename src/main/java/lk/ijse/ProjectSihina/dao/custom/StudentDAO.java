@@ -31,7 +31,7 @@ public interface StudentDAO extends CrudDAO<Student> {
 
     String getStudentCount() throws SQLException;
 
-    List<String> getAllEmailsByClass(String stuClass) throws SQLException;
+    ArrayList<String> getAllEmailsByClass(String stuClass) throws SQLException;
 
-    List<String> getAllEmail(String student) throws SQLException;
+    ArrayList<String> getAllEmail(String student) throws SQLException;
 }

@@ -97,7 +97,7 @@ public class TeacherDAOImpl implements TeacherDAO {
     }
 
     @Override
-    public List<Teacher> getAll() throws SQLException {
+    public ArrayList<Teacher> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Teacher");
 
         ArrayList<Teacher> teachersList = new ArrayList<>();
@@ -148,25 +148,8 @@ public class TeacherDAOImpl implements TeacherDAO {
     }
 
     @Override
-    public List<Teacher> getAllNameTeacher() throws SQLException {
-        ResultSet resultSet = SQLUtil.execute("SELECT Name FROM Teacher");
-
-        ArrayList<Teacher> nameList = new ArrayList<>();
-
-        while (resultSet.next()){
-            nameList.add(new Teacher(
-                    resultSet.getString(1)
-            ));
-        }
-        return nameList;
-    }
-
-    @Override
     public String getTeacherId(String teacher) throws SQLException {
-        Connection connection = DbConnection.getInstance().getConnection();
-        PreparedStatement pstm = connection.prepareStatement("SELECT Teacher_id FROM Teacher WHERE Name = ?");
-        pstm.setString(1, teacher);
-        ResultSet resultSet = pstm.executeQuery();
+        ResultSet resultSet = SQLUtil.execute("SELECT Teacher_id FROM Teacher WHERE Name = ?", teacher);
         String Teacher_id = null;
         if (resultSet.next()) {
             Teacher_id = resultSet.getString(1);
@@ -175,7 +158,7 @@ public class TeacherDAOImpl implements TeacherDAO {
     }
 
     @Override
-    public List<Teacher> getAllTeacherName() throws SQLException {
+    public ArrayList<Teacher> getAllTeacherName() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Name FROM Teacher");
 
         ArrayList<Teacher> teacherNameList = new ArrayList<>();
@@ -209,7 +192,7 @@ public class TeacherDAOImpl implements TeacherDAO {
         return resultSet.getString(1);
     }
 
-    public List<String> getAllEmail(String teacher) throws SQLException {
+    public ArrayList<String> getAllEmail(String teacher) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Email FROM Teacher");
 
         ArrayList<String> EmailList = new ArrayList<>();

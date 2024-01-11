@@ -19,6 +19,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.Other.Months;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.RegistrationBO;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.GuardianDto;
 import lk.ijse.ProjectSihina.dto.PaymentDto;
@@ -107,6 +109,8 @@ public class RegistrationPayForm implements Initializable {
 
     private String Type = "RegistrationFee";
 
+    RegistrationBO registrationBO = (RegistrationBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.REGISTRATION);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -148,7 +152,7 @@ public class RegistrationPayForm implements Initializable {
         ObservableList<RegisterTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PaymentDto> dtoList = RegisterStudentModel.getAllRegisterPayment(Type);
+            List<PaymentDto> dtoList = registrationBO.getAllRegisterPayment(Type);
 
             for (PaymentDto dto : dtoList) {
                 obList.add(new RegisterTm(
@@ -170,7 +174,7 @@ public class RegistrationPayForm implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = registrationBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -217,7 +221,7 @@ public class RegistrationPayForm implements Initializable {
 
     private void generatePayId() {
         try {
-            String PayId = PaymentModel.generateNextPayId();
+            String PayId = registrationBO.generateNextPayId();
             txtPayId.setText(PayId);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -234,7 +238,8 @@ public class RegistrationPayForm implements Initializable {
         }
 
         try {
-            boolean isDeleted = PaymentModel.DeletePayment(PayId);
+            boolean isDeleted = registrationBO.DeletePayment(PayId);
+
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Delete Success!!!").showAndWait();
                 clearField();
@@ -287,7 +292,8 @@ public class RegistrationPayForm implements Initializable {
         PaymentDto PayDto = new PaymentDto(PayId,StuId, StuName,type,StuClass,month,Subject,PayAmount,date,time);
 
         try {
-            boolean isRegisterStudent = RegisterStudentModel.SaveStudentRegisterAndPayment(studentDto, PayDto, guardianDto);
+            boolean isRegisterStudent = registrationBO.SaveStudentRegisterAndPayment(studentDto, PayDto, guardianDto);
+
             if (isRegisterStudent) {
                 new Alert(Alert.AlertType.INFORMATION, "Student Register Success!!").showAndWait();
                 clearField();
@@ -337,7 +343,8 @@ public class RegistrationPayForm implements Initializable {
     void btnSearchOnAction(ActionEvent event) {
         String PayId = txtPayId.getText();
         try {
-            PaymentDto dto = PaymentModel.SearchPaymontId(PayId);
+            PaymentDto dto = registrationBO.SearchPaymentId(PayId);
+
             if (dto != null) {
                 txtPayId.setText(dto.getPayID());
                 txtID.setText(dto.getStuID());
@@ -365,7 +372,7 @@ public class RegistrationPayForm implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, PaymentTm, t1) -> {
                     try {
-                        PaymentDto dto = PaymentModel.SearchPaymontId(t1.getPayId());
+                        PaymentDto dto = registrationBO.SearchPaymentId(t1.getPayId());
                         if (dto != null) {
                             txtPayId.setText(dto.getPayID());
                             txtID.setText(dto.getStuID());

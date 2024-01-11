@@ -41,7 +41,7 @@ public class PaymentDto {
         StuID = stuID;
         StuName = stuName;
         StuClass = stuClass;
-        Amount = amount;
         this.date = date;
+        Amount = amount;
     }
 }

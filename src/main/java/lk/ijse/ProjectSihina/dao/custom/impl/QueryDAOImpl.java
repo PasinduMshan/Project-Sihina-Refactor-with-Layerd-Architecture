@@ -19,7 +19,7 @@ import java.util.List;
 
 public class QueryDAOImpl implements QueryDAO {
     @Override
-    public List<Query> getAllClass() throws SQLException {
+    public ArrayList<Query> getAllClass() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT c.class_id, c.Name, COUNT(s.Stu_id) AS " +
                 "student_count FROM Class c LEFT JOIN Registration r ON c.class_id = r.class_id LEFT JOIN Student s ON " +
                 "r.Stu_id = s.Stu_id GROUP BY c.class_id, c.Name ORDER BY c.class_id;");
@@ -39,7 +39,7 @@ public class QueryDAOImpl implements QueryDAO {
     }
 
     @Override
-    public List<Query> getTodaySchedule(LocalDate date) throws SQLException {
+    public ArrayList<Query> getTodaySchedule(LocalDate date) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT DAYNAME(NOW()) AS current_day");
         resultSet.next();
         String day  = resultSet.getString(1);
@@ -64,7 +64,7 @@ public class QueryDAOImpl implements QueryDAO {
     }
 
     @Override
-    public List<Query> getTodayExams(LocalDate date) throws SQLException {
+    public ArrayList<Query> getTodayExams(LocalDate date) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT E.Start_time, E.End_time, C.Name, Su.Sub_Name FROM Exam E JOIN " +
                 "Class C ON E.class_id = C.class_id JOIN Subject Su ON E.Sub_id = Su.Sub_id WHERE E.date = ?", date);
 

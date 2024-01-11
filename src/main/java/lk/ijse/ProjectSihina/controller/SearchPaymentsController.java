@@ -13,10 +13,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.Other.Months;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.SearchPaymentBO;
 import lk.ijse.ProjectSihina.dto.PaymentDto;
 import lk.ijse.ProjectSihina.dto.StudentDto;
 import lk.ijse.ProjectSihina.dto.Tm.PaymentTm;
-import lk.ijse.ProjectSihina.model.PaymentModel;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -48,6 +49,8 @@ public class SearchPaymentsController implements Initializable {
 
     @FXML
     private JFXTextField txtSubject;
+
+    SearchPaymentBO searchPaymentBO = (SearchPaymentBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SEARCH_PAYMENT);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -83,7 +86,7 @@ public class SearchPaymentsController implements Initializable {
     }
 
     @FXML
-    void SearchMonthDeatilOnAction(ActionEvent event) {
+    void SearchMonthDetailOnAction(ActionEvent event) {
         String id = txtID.getText();
         String month =cmbMonth.getValue();
         ObservableList<PaymentTm> obList = FXCollections.observableArrayList();
@@ -94,7 +97,7 @@ public class SearchPaymentsController implements Initializable {
         }
 
         try {
-            List<PaymentDto> dtoList = PaymentModel.searchStuPays(id,month);
+            List<PaymentDto> dtoList = searchPaymentBO.searchStuPays(id,month);
 
             for (PaymentDto PayDto : dtoList) {
                 System.out.println(PayDto.getSubject());
@@ -112,7 +115,7 @@ public class SearchPaymentsController implements Initializable {
 
     @FXML
     void SearchOnAction(ActionEvent event) {
-        SearchMonthDeatilOnAction(event);
+        SearchMonthDetailOnAction(event);
     }
 
     public void StudentIdSearchOnAction(ActionEvent actionEvent) {
@@ -123,7 +126,7 @@ public class SearchPaymentsController implements Initializable {
         }
 
         try {
-            StudentDto dto = PaymentModel.searchStu(id);
+            StudentDto dto = searchPaymentBO.searchStu(id);
 
             if (dto != null) {
                 txtName.setText(dto.getName());

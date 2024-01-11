@@ -23,12 +23,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.Other.Months;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.PaymentBO;
 import lk.ijse.ProjectSihina.dto.*;
 import lk.ijse.ProjectSihina.dto.Tm.PaymentTm;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.GuardianModel;
-import lk.ijse.ProjectSihina.model.PaymentModel;
-import lk.ijse.ProjectSihina.model.SubjectModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -38,11 +36,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -109,6 +105,7 @@ public class PaymentFormController implements Initializable {
     @FXML
     private JFXTextField txtPayId;
 
+    PaymentBO paymentBO = (PaymentBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PAYMENT);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -143,8 +140,9 @@ public class PaymentFormController implements Initializable {
 
     private void loadAllSubject() {
         ObservableList<String> obList = FXCollections.observableArrayList();
+
         try {
-            List<SubjectDto> SubList = PaymentModel.getAllSubject();
+            List<SubjectDto> SubList = paymentBO.getAllSubject();
 
             for (SubjectDto dto : SubList) {
                 obList.add(dto.getSubject());
@@ -160,7 +158,7 @@ public class PaymentFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = paymentBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -182,7 +180,7 @@ public class PaymentFormController implements Initializable {
         ObservableList<PaymentTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<PaymentDto> dtoList = PaymentModel.getAllPayment();
+            List<PaymentDto> dtoList = paymentBO.getAllPayment();
 
             for (PaymentDto dto : dtoList) {
                 obList.add(new PaymentTm(
@@ -211,7 +209,7 @@ public class PaymentFormController implements Initializable {
 
     private void generatePayId() {
         try {
-            String PayId = PaymentModel.generateNextPayId();
+            String PayId = paymentBO.generateNextPayId();
             txtPayId.setText(PayId);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -260,7 +258,7 @@ public class PaymentFormController implements Initializable {
         PaymentDto dto = new PaymentDto(payId, StuId, StuName, type, StuClass, month, subject, amount, date, time);
 
         try {
-            boolean isAdd = PaymentModel.AddPayment(dto);
+            boolean isAdd = paymentBO.AddPayment(dto);
 
             if (isAdd) {
                 new Alert(Alert.AlertType.INFORMATION,"Payment Success!!").showAndWait();
@@ -284,7 +282,8 @@ public class PaymentFormController implements Initializable {
         }
 
         try {
-            boolean isDeleted = PaymentModel.DeletePayment(PayId);
+            boolean isDeleted = paymentBO.DeletePayment(PayId);
+
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Delete Success!!!").showAndWait();
                 clearField();
@@ -338,7 +337,8 @@ public class PaymentFormController implements Initializable {
         }
 
         try {
-            PaymentDto dto = PaymentModel.SearchPaymontId(PayId);
+            PaymentDto dto = paymentBO.SearchPaymentId(PayId);
+
             if (dto != null) {
                 txtPayId.setText(dto.getPayID());
                 txtID.setText(dto.getStuID());
@@ -388,7 +388,8 @@ public class PaymentFormController implements Initializable {
         PaymentDto dto = new PaymentDto(payId, StuId, StuName, type, StuClass, month, subject, amount, date, time);
 
         try {
-            boolean isUpdated = PaymentModel.updatePayment(dto);
+            boolean isUpdated = paymentBO.updatePayment(dto);
+
             if (isUpdated) {
                 new Alert(Alert.AlertType.INFORMATION,"Update Success!!!").showAndWait();
                 clearField();
@@ -434,7 +435,8 @@ public class PaymentFormController implements Initializable {
         }
 
         try {
-            String allAttendant = PaymentModel.getAllAttendant(Stu_id, Subject, month, Stu_class);
+            String allAttendant = paymentBO.getAllAttendant(Stu_id, Subject, month, Stu_class);
+
             txtAttendantCount.setText(allAttendant);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -466,7 +468,8 @@ public class PaymentFormController implements Initializable {
         String subject = cmbSubject.getValue();
         if (subject != null) {
             try {
-                double amountINSubject = SubjectModel.getAmountINSubject(subject);
+                double amountINSubject = paymentBO.getAmountINSubject(subject);
+
                 txtAmount.setText(String.valueOf(amountINSubject));
             } catch (SQLException e) {
                 new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -487,7 +490,8 @@ public class PaymentFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, PaymentTm, t1) -> {
                     try {
-                        PaymentDto dto = PaymentModel.SearchPaymontId(t1.getPay_id());
+                        PaymentDto dto = paymentBO.SearchPaymentId(t1.getPay_id());
+
                         if (dto != null) {
                             txtPayId.setText(dto.getPayID());
                             txtID.setText(dto.getStuID());
@@ -509,7 +513,7 @@ public class PaymentFormController implements Initializable {
     public void btnStudentSearchOnAction(ActionEvent actionEvent) {
         String id = txtID.getText();
         try {
-            StudentDto dto = PaymentModel.getStudentNameClass(id);
+            StudentDto dto = paymentBO.getStudentNameClass(id);
 
             if (dto != null) {
                 txtName.setText(dto.getName());

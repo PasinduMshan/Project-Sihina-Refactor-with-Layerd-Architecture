@@ -7,7 +7,6 @@ import lk.ijse.ProjectSihina.entity.Schedule;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ScheduleDAOImpl implements ScheduleDAO {
     @Override
@@ -41,7 +40,7 @@ public class ScheduleDAOImpl implements ScheduleDAO {
     }
 
     @Override
-    public List<Schedule> getAll() throws SQLException {
+    public ArrayList<Schedule> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Schedule ORDER BY Class_Day");
 
         ArrayList<Schedule> schedulesList = new ArrayList<>();

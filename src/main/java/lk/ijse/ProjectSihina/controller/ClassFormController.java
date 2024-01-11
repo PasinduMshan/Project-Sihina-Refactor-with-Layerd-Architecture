@@ -10,12 +10,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.ClassBO;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.Tm.ClassTm;
-import lk.ijse.ProjectSihina.model.ClassModel;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -45,6 +45,8 @@ public class ClassFormController implements Initializable {
     @FXML
     private TableView<ClassTm> tblClass;
 
+    ClassBO classBO = (ClassBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CLASS);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
        setCellValueFactory();
@@ -57,7 +59,7 @@ public class ClassFormController implements Initializable {
 
     private void generateClassId() {
         try {
-            String id = ClassModel.generateClassId();
+            String id = classBO.generateClassId();
             txtID.setText(id);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -69,7 +71,7 @@ public class ClassFormController implements Initializable {
         ObservableList<ClassTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> dtoList = ClassModel.getAllClass();
+            List<ClassDto> dtoList = classBO.getAllClass();
 
             for (ClassDto dto : dtoList) {
                 obList.add(new ClassTm(
@@ -103,7 +105,7 @@ public class ClassFormController implements Initializable {
         ClassDto dto = new ClassDto(ClassId, ClassName);
 
         try {
-            boolean isSavedClass = ClassModel.savaClass(dto);
+            boolean isSavedClass = classBO.savaClass(dto);
 
             if (isSavedClass) {
                 new Alert(Alert.AlertType.INFORMATION,"Class saved success!!!").showAndWait();
@@ -129,7 +131,7 @@ public class ClassFormController implements Initializable {
         }
 
         try {
-            boolean isDeleteClass = ClassModel.isDeleteClass(ClassId);
+            boolean isDeleteClass = classBO.isDeleteClass(ClassId);
             if (isDeleteClass) {
                 new Alert(Alert.AlertType.INFORMATION,"Delete Class Success!!!").showAndWait();
                 clearFields();
@@ -155,7 +157,8 @@ public class ClassFormController implements Initializable {
         ClassDto dto = new ClassDto(ClassId, ClassName);
 
         try {
-            boolean isUpdated = ClassModel.isUpdate(dto);
+            boolean isUpdated = classBO.isUpdate(dto);
+
             if (isUpdated) {
                 new Alert(Alert.AlertType.INFORMATION,"Update Success!!!").showAndWait();
                 clearFields();
@@ -174,7 +177,7 @@ public class ClassFormController implements Initializable {
         String ClassId = txtID.getText();
 
         try {
-            ClassDto dto = ClassModel.searchClass(ClassId);
+            ClassDto dto = classBO.searchClass(ClassId);
 
             if (dto != null) {
                 txtID.setText(dto.getClassID());
@@ -193,7 +196,7 @@ public class ClassFormController implements Initializable {
         String ClassId = txtID.getText();
 
         try {
-            ClassDto dto = ClassModel.searchClass(ClassId);
+            ClassDto dto = classBO.searchClass(ClassId);
 
             if (dto != null) {
                 txtID.setText(dto.getClassID());

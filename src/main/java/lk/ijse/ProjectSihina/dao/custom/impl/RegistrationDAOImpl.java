@@ -5,19 +5,13 @@ import lk.ijse.ProjectSihina.dao.custom.RegistrationDAO;
 import lk.ijse.ProjectSihina.entity.Registration;
 
 import java.sql.*;
-import java.util.List;
+import java.util.ArrayList;
 
 public class RegistrationDAOImpl implements RegistrationDAO {
-
-    @Override
-    public boolean saveDetailRegistration(Registration entity) throws SQLException {
-        return SQLUtil.execute("INSERT INTO Registration VALUES (?,?,?,?,?,?,?)", entity.getStuId(), entity.getPayId(),
-                entity.getStuName(), entity.getClassId(), entity.getRegFee(), entity.getDate(), entity.getTime());
-    }
-
     @Override
     public boolean save(Registration entity) throws SQLException {
-        return false;
+        return SQLUtil.execute("INSERT INTO Registration VALUES (?,?,?,?,?,?,?)", entity.getStuId(), entity.getPayId(),
+                entity.getStuName(), entity.getClassId(), entity.getRegFee(), entity.getDate(), entity.getTime());
     }
 
     @Override
@@ -36,7 +30,7 @@ public class RegistrationDAOImpl implements RegistrationDAO {
     }
 
     @Override
-    public List<Registration> getAll() throws SQLException {
+    public ArrayList<Registration> getAll() throws SQLException {
         return null;
     }
 

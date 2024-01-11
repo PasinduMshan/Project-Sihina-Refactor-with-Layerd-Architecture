@@ -16,7 +16,7 @@ public class Registration {
     String payId;
     String StuName;
     String ClassId;
-    String RegFee;
+    double RegFee;
     LocalDate Date;
     LocalTime Time;
 }

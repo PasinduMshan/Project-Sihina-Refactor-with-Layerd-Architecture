@@ -3,16 +3,11 @@ package lk.ijse.ProjectSihina.dao.custom.impl;
 import lk.ijse.ProjectSihina.User.UserConnection;
 import lk.ijse.ProjectSihina.dao.SQLUtil;
 import lk.ijse.ProjectSihina.dao.custom.UserDAO;
-import lk.ijse.ProjectSihina.db.DbConnection;
-import lk.ijse.ProjectSihina.dto.UserDto;
 import lk.ijse.ProjectSihina.entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
@@ -23,7 +18,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public List<User> getAll() throws SQLException {
+    public ArrayList<User> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM user");
 
         ArrayList<User> dtoList = new ArrayList<>();
@@ -166,11 +161,6 @@ public class UserDAOImpl implements UserDAO {
             Email = resultSet.getString(1);
         }
         return Email;
-    }
-
-    @Override
-    public boolean changeCredentials(String userName, String password, String NIC) throws SQLException {
-        return SQLUtil.execute("UPDATE user SET user_Name = ?, Password = ? WHERE NIC = ?", userName, password, NIC);
     }
 
     @Override

@@ -5,7 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
-import lk.ijse.ProjectSihina.model.ForgetPasswordModel;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.ChangeCredentialsBO;
 
 import java.sql.SQLException;
 import java.util.regex.Pattern;
@@ -28,6 +29,8 @@ public class ChangeCredentialsFormController {
     private JFXTextField txtUserName;
 
     private String NIC;
+
+    ChangeCredentialsBO changeCredentialsBO = (ChangeCredentialsBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CHANGE_CREDENTIALS);
 
     public void initialData(String NIC) {
         this.NIC = NIC;
@@ -71,12 +74,15 @@ public class ChangeCredentialsFormController {
         }
 
         if (userName.equals(confirmUserName)) {
+
             if (password.equals(confirmPassword)) {
                 try {
-                    boolean isChange = ForgetPasswordModel.changeCredentials(userName, password, NIC);
+                    boolean isChange = changeCredentialsBO.updateCredentials(userName, password, NIC);
+
                     if (isChange) {
                         new Alert(Alert.AlertType.INFORMATION,"Change Success!!").showAndWait();
                         clearField();
+
                     } else {
                         new Alert(Alert.AlertType.ERROR,"Change Failed!!").show();
                     }

@@ -8,12 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.SignupBO;
 import lk.ijse.ProjectSihina.dto.UserDto;
-import lk.ijse.ProjectSihina.model.SignUpModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -44,16 +44,14 @@ public class SingupFormController implements Initializable {
     @FXML
     private JFXTextField txtUserName;
 
-    private SignUpModel signUpModel = new SignUpModel();
-
-
+    SignupBO signupBO = (SignupBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SIGNUP);
 
     @FXML
     void btnRegisterOnAction(ActionEvent event) throws IOException {
 
         String userId = null;
         try {
-            userId = signUpModel.generateNextUserId();
+            userId = signupBO.generateNextUserId();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
         }
@@ -71,7 +69,7 @@ public class SingupFormController implements Initializable {
             var dto = new UserDto(userId, firstName, lastName, Email, NIC, userName, password);
 
             try {
-                boolean isRegister = signUpModel.userRegister(dto);
+                boolean isRegister = signupBO.userRegister(dto);
 
                 if (isRegister) {
                     clearFields();
@@ -156,41 +154,6 @@ public class SingupFormController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    public static void switchTextFieldOnArrowPress(JFXTextField textField, JFXTextField nextTextField) {
-        textField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case DOWN:
-                    nextTextField.requestFocus();
-                    event.consume();
-                    break;
-            }
-        });
-    }
-    public static void switchTextFieldOnArrowPressLeftRight(JFXTextField textField, JFXTextField nextTextField) {
-        textField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case RIGHT:
-                    nextTextField.requestFocus();
-                    event.consume();
-                    break;
-                case LEFT:
-                    nextTextField.requestFocus();
-                    event.consume();
-                    break;
-            }
-        });
-    }
-    public static void switchTextFieldOnArrowPressUP(JFXTextField textField, JFXTextField nextTextField) {
-        textField.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case UP:
-                    nextTextField.requestFocus();
-                    event.consume();
-                    break;
-            }
-        });
     }
 
     @Override

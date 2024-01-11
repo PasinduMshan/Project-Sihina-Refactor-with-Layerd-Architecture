@@ -7,26 +7,20 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.ExamBO;
 import lk.ijse.ProjectSihina.db.DbConnection;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.ExamDto;
 import lk.ijse.ProjectSihina.dto.SubjectDto;
 import lk.ijse.ProjectSihina.dto.Tm.ExamTm;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.ExamModel;
-import lk.ijse.ProjectSihina.model.PaymentModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -85,6 +79,8 @@ public class ExamFormController implements Initializable {
     @FXML
     private JFXTextField txtStartTime;
 
+    ExamBO examBO = (ExamBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EXAM);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -105,7 +101,7 @@ public class ExamFormController implements Initializable {
 
     private void generateExam() {
         try {
-            String id = ExamModel.generateExamId();
+            String id = examBO.generateExamId();
             txtID.setText(id);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -114,8 +110,9 @@ public class ExamFormController implements Initializable {
 
     private void loadAllSubject() {
         ObservableList<String> obList = FXCollections.observableArrayList();
+
         try {
-            List<SubjectDto> SubList = PaymentModel.getAllSubject();
+            List<SubjectDto> SubList = examBO.getAllSubject();
 
             for (SubjectDto dto : SubList) {
                 obList.add(dto.getSubject());
@@ -130,7 +127,7 @@ public class ExamFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = examBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -145,7 +142,7 @@ public class ExamFormController implements Initializable {
         ObservableList<ExamTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<ExamDto> dtoList = ExamModel.getAllExam();
+            List<ExamDto> dtoList = examBO.getAllExam();
 
             for (ExamDto dto : dtoList) {
                 obList.add(new ExamTm(
@@ -183,7 +180,7 @@ public class ExamFormController implements Initializable {
         ExamDto dto = new ExamDto(examId, className, subject, description, date, Start_time, End_time);
 
         try {
-            boolean isSaved = ExamModel.AddExam(dto);
+            boolean isSaved = examBO.AddExam(dto);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.INFORMATION,"Exam Save Success!!!").showAndWait();
@@ -205,7 +202,8 @@ public class ExamFormController implements Initializable {
         String examId = txtID.getText();
 
         try {
-            boolean isDeleted = ExamModel.deleteExam(examId);
+            boolean isDeleted = examBO.deleteExam(examId);
+
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Delete Success!!!").showAndWait();
                 loadAllExamToTable();
@@ -242,7 +240,8 @@ public class ExamFormController implements Initializable {
         String ExamId = txtID.getText();
 
         try {
-            ExamDto dto = ExamModel.SearchExam(ExamId);
+            ExamDto dto = examBO.SearchExam(ExamId);
+
             if (dto != null) {
                 txtID.setText(dto.getExamId());
                 cmbClass.setValue(dto.getClassName());
@@ -272,7 +271,8 @@ public class ExamFormController implements Initializable {
         ExamDto dto = new ExamDto(examId, className, subject, description, date, Start_time, End_time);
 
         try {
-            boolean isUpdated = ExamModel.updateExam(dto);
+            boolean isUpdated = examBO.updateExam(dto);
+
             if (isUpdated) {
                 new Alert(Alert.AlertType.INFORMATION,"Update Success!!!").showAndWait();
                 loadAllExamToTable();
@@ -303,7 +303,7 @@ public class ExamFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, ExamTm, t1) -> {
                     try {
-                        ExamDto dto = ExamModel.SearchExam(t1.getExamId());
+                        ExamDto dto = examBO.SearchExam(t1.getExamId());
                         if (dto != null) {
                             txtID.setText(dto.getExamId());
                             cmbClass.setValue(dto.getClassName());

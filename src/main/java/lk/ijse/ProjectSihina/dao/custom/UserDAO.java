@@ -23,7 +23,5 @@ public interface UserDAO extends CrudDAO<User> {
 
     String getEmail(String nic) throws SQLException;
 
-    boolean changeCredentials(String userName, String password, String NIC) throws SQLException;
-
     boolean checkCredentialsByPassword(String userName , String password) throws SQLException;
 }

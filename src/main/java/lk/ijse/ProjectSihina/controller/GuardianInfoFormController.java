@@ -16,19 +16,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
-import lk.ijse.ProjectSihina.dto.ExamDto;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.GuardianBO;
 import lk.ijse.ProjectSihina.dto.GuardianDto;
 import lk.ijse.ProjectSihina.dto.StudentDto;
 import lk.ijse.ProjectSihina.dto.Tm.GuardianTm;
-import lk.ijse.ProjectSihina.model.ExamModel;
-import lk.ijse.ProjectSihina.model.GuardianModel;
-import lk.ijse.ProjectSihina.controller.RegistrationPayForm;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
@@ -78,6 +74,9 @@ public class GuardianInfoFormController implements Initializable {
     private JFXTextField txtStudentId;
 
     private StudentDto studentDto;
+
+    GuardianBO guardianBO = (GuardianBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.GUARDIAN);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         generateGuardianID();
@@ -113,7 +112,7 @@ public class GuardianInfoFormController implements Initializable {
         ObservableList<GuardianTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<GuardianDto> dtoList = GuardianModel.getAllGuardian();
+            List<GuardianDto> dtoList = guardianBO.getAllGuardian();
 
             for (GuardianDto dto : dtoList) {
                 obList.add(new GuardianTm(
@@ -138,7 +137,7 @@ public class GuardianInfoFormController implements Initializable {
 
     private void generateGuardianID() {
         try {
-            String guardianId = GuardianModel.getGuardianId();
+            String guardianId = guardianBO.getGuardianId();
             txtGuardianID.setText(guardianId);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -160,6 +159,7 @@ public class GuardianInfoFormController implements Initializable {
         }
 
         boolean isValidate = validateStudentDetail(Name, contactNo, email, occupation);
+
         if (isValidate) {
             GuardianDto dto = new GuardianDto(GuardId, Name, contactNo, email, occupation, StuId);
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/view/Registration_Pay_Form.fxml"));
@@ -206,13 +206,14 @@ public class GuardianInfoFormController implements Initializable {
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
         String ID = txtGuardianID.getText();
+
         if (ID.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Guardian Id is empty!!!").show();
             return;
         }
 
         try {
-            boolean isDelete = GuardianModel.deleteGuard(ID);
+            boolean isDelete = guardianBO.deleteGuard(ID);
             if (isDelete) {
                 new Alert(Alert.AlertType.INFORMATION,"Guardian Delete Success!!!").showAndWait();
                 loadAllGuardian();
@@ -227,13 +228,14 @@ public class GuardianInfoFormController implements Initializable {
     @FXML
     void btnGuardianContactSearchOnAction(ActionEvent event) {
         String contact = txtContactNo.getText();
+
         if (contact.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Contact No is empty!!!").show();
             return;
         }
 
         try {
-            GuardianDto dto = GuardianModel.SearchGuardianFromContact(contact);
+            GuardianDto dto = guardianBO.SearchGuardianFromContact(contact);
 
             if (dto != null) {
                 txtGuardianID.setText(dto.getGuardId());
@@ -254,13 +256,14 @@ public class GuardianInfoFormController implements Initializable {
     @FXML
     void btnGuardianIDSearchOnAction(ActionEvent event) {
         String id = txtGuardianID.getText();
+
         if (id.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Guardian Id is empty!!!").show();
             return;
         }
 
         try {
-            GuardianDto dto = GuardianModel.SearchGuardianFromId(id);
+            GuardianDto dto = guardianBO.SearchGuardianFromId(id);
 
             if (dto != null) {
                 txtGuardianID.setText(dto.getGuardId());
@@ -280,13 +283,14 @@ public class GuardianInfoFormController implements Initializable {
     @FXML
     void btnSearchOnAction(ActionEvent event) {
         String id = txtGuardianID.getText();
+
         if (id.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Guardian Id is empty!!!").show();
             return;
         }
 
         try {
-            GuardianDto dto = GuardianModel.SearchGuardianFromId(id);
+            GuardianDto dto = guardianBO.SearchGuardianFromId(id);
 
             if (dto != null) {
                 txtGuardianID.setText(dto.getGuardId());
@@ -306,13 +310,14 @@ public class GuardianInfoFormController implements Initializable {
     @FXML
     void btnStudentGuardianSearchOnAction(ActionEvent event) {
         String StuId = txtStudentId.getText();
+
         if (StuId.isEmpty()) {
             new Alert(Alert.AlertType.ERROR, "Student Id is empty!!!").show();
             return;
         }
 
         try {
-            GuardianDto dto = GuardianModel.SearchGuardianFromStuId(StuId);
+            GuardianDto dto = guardianBO.SearchGuardianFromStuId(StuId);
 
             if (dto != null) {
                 txtGuardianID.setText(dto.getGuardId());
@@ -339,15 +344,20 @@ public class GuardianInfoFormController implements Initializable {
         String StuId = txtStudentId.getText();
 
         if (StuId.isEmpty()) {
-            new Alert(Alert.AlertType.ERROR,"Sutudent Id Field is Empty!!!").show();
+            new Alert(Alert.AlertType.ERROR,"Student Id Field is Empty!!!").show();
             return;
         }
 
         boolean isValidate = validateStudentDetail(Name, contactNo, email, occupation);
+
         if (isValidate) {
+
             GuardianDto dto = new GuardianDto(GuardId, Name, contactNo, email, occupation, StuId);
+
             try {
-                boolean updateGuardian = GuardianModel.updateGuardian(dto);
+
+                boolean updateGuardian = guardianBO.updateGuardian(dto);
+
                 if (updateGuardian) {
                     new Alert(Alert.AlertType.INFORMATION,"Update Success!!!").showAndWait();
                     loadAllGuardian();
@@ -380,7 +390,7 @@ public class GuardianInfoFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, GuardianTm, t1) -> {
                     try {
-                        GuardianDto dto = GuardianModel.SearchGuardianFromId(t1.getGuardId());
+                        GuardianDto dto = guardianBO.SearchGuardianFromId(t1.getGuardId());
                         if (dto != null) {
                             txtGuardianID.setText(dto.getGuardId());
                             txtGuardianName.setText(dto.getName());

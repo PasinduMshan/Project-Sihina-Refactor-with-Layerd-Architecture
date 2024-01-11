@@ -3,7 +3,6 @@ package lk.ijse.ProjectSihina.entity;
 import lombok.*;
 
 import java.time.LocalTime;
-
 @Setter
 @Getter
 @NoArgsConstructor

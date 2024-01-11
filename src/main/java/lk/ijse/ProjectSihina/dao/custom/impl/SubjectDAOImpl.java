@@ -2,11 +2,8 @@ package lk.ijse.ProjectSihina.dao.custom.impl;
 
 import lk.ijse.ProjectSihina.dao.SQLUtil;
 import lk.ijse.ProjectSihina.dao.custom.SubjectDAO;
-import lk.ijse.ProjectSihina.db.DbConnection;
 import lk.ijse.ProjectSihina.entity.Subject;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,7 +48,7 @@ public class SubjectDAOImpl implements SubjectDAO {
     }
 
     @Override
-    public List<Subject> getAll() throws SQLException {
+    public ArrayList<Subject> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Subject");
 
         ArrayList<Subject> subjectsList = new ArrayList<>();
@@ -125,7 +122,7 @@ public class SubjectDAOImpl implements SubjectDAO {
     }
 
     @Override
-    public List<Subject> getAllSubjectName() throws SQLException {
+    public ArrayList<Subject> getAllSubjectName() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Sub_Name FROM Subject");
 
         ArrayList<Subject> subNameList = new ArrayList<>();

@@ -16,19 +16,18 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Barcode.QRCodeGenerator;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.StudentBO;
 import lk.ijse.ProjectSihina.db.DbConnection;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.StudentDto;
 import lk.ijse.ProjectSihina.dto.Tm.StudentTM;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.StudentModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -103,6 +102,8 @@ public class StudentInfoFormController implements Initializable {
 
     public static File selectedImageFile;
 
+    StudentBO studentBO = (StudentBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.STUDENT);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
        loadGender();
@@ -133,7 +134,7 @@ public class StudentInfoFormController implements Initializable {
 
     private void generateStuId() {
         try {
-            String StuId = StudentModel.generateStudentId();
+            String StuId = studentBO.generateStudentId();
             txtID.setText(StuId);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -144,7 +145,7 @@ public class StudentInfoFormController implements Initializable {
         ObservableList<StudentTM> obList = FXCollections.observableArrayList();
 
         try {
-            List<StudentDto> dtoList = StudentModel.getAllStudent();
+            List<StudentDto> dtoList = studentBO.getAllStudent();
 
             for (StudentDto dto : dtoList) {
                 obList.add(new StudentTM(
@@ -173,7 +174,7 @@ public class StudentInfoFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = studentBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -230,7 +231,7 @@ public class StudentInfoFormController implements Initializable {
         }
 
         try {
-            boolean isDeleted = StudentModel.deleteStudent(id);
+            boolean isDeleted = studentBO.deleteStudent(id);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Student Deleted Success!!!").showAndWait();
@@ -281,8 +282,10 @@ public class StudentInfoFormController implements Initializable {
             new Alert(Alert.AlertType.ERROR,"Some Fields are empty!!!").showAndWait();
 
         }
+
         boolean validateDetail = validateStudentDetail(Name, Address, email,dob, contact);
         StudentDto studentDto = null;
+
         if (validateDetail) {
             LocalDate date = LocalDate.parse(dob);
             studentDto =  new StudentDto(Id, Name, Address, genderPromptTxt, email, date, contact, classPromptTxt, subjects, studentImage);
@@ -362,12 +365,13 @@ public class StudentInfoFormController implements Initializable {
             new Alert(Alert.AlertType.ERROR,"Some Fields are empty!!!").showAndWait();
         }
         boolean UpdateValidated = validateStudentDetail(name, address, email, dob, contact);
+
         if (UpdateValidated) {
             LocalDate date = LocalDate.parse(dob);
             StudentDto dto = new StudentDto(ID, name, address, gender, email, date, contact, stu_class, subject, studentImage);
 
             try {
-                boolean isUpdated = StudentModel.updateStudent(dto);
+                boolean isUpdated = studentBO.updateStudent(dto);
 
                 if (isUpdated) {
                     new Alert(Alert.AlertType.INFORMATION, "Update Success!!!").showAndWait();
@@ -392,7 +396,8 @@ public class StudentInfoFormController implements Initializable {
         }
 
         try {
-            StudentDto dto = StudentModel.searchStudent(id);
+            StudentDto dto = studentBO.searchStudent(id);
+
             if (dto != null) {
                 txtNameWithInitials.setText(dto.getName());
                 txtAddress.setText(dto.getAddress());
@@ -454,7 +459,7 @@ public class StudentInfoFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, StudentTm, t1) -> {
                     try {
-                        StudentDto dto = StudentModel.searchStudent(t1.getID());
+                        StudentDto dto = studentBO.searchStudent(t1.getID());
                         if (dto != null) {
                             txtID.setText(dto.getID());
                             txtNameWithInitials.setText(dto.getName());

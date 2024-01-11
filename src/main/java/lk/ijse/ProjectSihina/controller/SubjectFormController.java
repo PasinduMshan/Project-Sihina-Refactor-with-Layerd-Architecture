@@ -11,18 +11,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.SubjectBO;
 import lk.ijse.ProjectSihina.db.DbConnection;
-import lk.ijse.ProjectSihina.dto.ClassDto;
-import lk.ijse.ProjectSihina.dto.StudentDto;
 import lk.ijse.ProjectSihina.dto.SubjectDto;
 import lk.ijse.ProjectSihina.dto.TeacherDto;
 import lk.ijse.ProjectSihina.dto.Tm.SubjectTm;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.StudentModel;
-import lk.ijse.ProjectSihina.model.SubjectModel;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -73,6 +69,8 @@ public class SubjectFormController implements Initializable {
     @FXML
     private JFXTextField txtMonthlyAmount;
 
+    SubjectBO subjectBO = (SubjectBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SUBJECT);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCellValueFactory();
@@ -94,7 +92,7 @@ public class SubjectFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<TeacherDto> nameList = SubjectModel.getAllTeacher();
+            List<TeacherDto> nameList = subjectBO.getAllTeacher();
 
             for (TeacherDto dto : nameList) {
                 obList.add(dto.getName());
@@ -108,7 +106,7 @@ public class SubjectFormController implements Initializable {
 
     private void generateSubjectId() {
         try {
-            String id = SubjectModel.generateSubId();
+            String id = subjectBO.generateSubId();
             txtID.setText(id);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
@@ -119,7 +117,7 @@ public class SubjectFormController implements Initializable {
         ObservableList<SubjectTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<SubjectDto> dtoList = SubjectModel.getAllDetails();
+            List<SubjectDto> dtoList = subjectBO.getAllDetails();
 
             for (SubjectDto dto : dtoList) {
                 obList.add(new SubjectTm(
@@ -161,6 +159,7 @@ public class SubjectFormController implements Initializable {
             new Alert(Alert.AlertType.ERROR, "Invalid AvailableClass!!").show();
             return;
         }
+
         String monthlyAmount = txtMonthlyAmount.getText();
         boolean matches3 = Pattern.matches("[0-9.]+", monthlyAmount);
         if (!matches3) {
@@ -180,7 +179,7 @@ public class SubjectFormController implements Initializable {
         SubjectDto dto = new SubjectDto(id, subject, AvailableClass, teacherName,amount);
 
         try {
-            boolean isSaved = SubjectModel.saveSubject(dto);
+            boolean isSaved = subjectBO.saveSubject(dto);
 
             if (isSaved) {
                 new Alert(Alert.AlertType.INFORMATION,"Subject Save Success!!!").showAndWait();
@@ -208,7 +207,7 @@ public class SubjectFormController implements Initializable {
         }
 
         try {
-            boolean isDeleted = SubjectModel.deleteSubject(id);
+            boolean isDeleted = subjectBO.deleteSubject(id);
 
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Subject Delete Success!!!").showAndWait();
@@ -281,7 +280,7 @@ public class SubjectFormController implements Initializable {
         SubjectDto dto = new SubjectDto(id, subject, AvailableClass, teacherName,amount);
 
         try {
-            boolean isUpdated = SubjectModel.updateSubject(dto);
+            boolean isUpdated = subjectBO.updateSubject(dto);
 
             if (isUpdated) {
                 new Alert(Alert.AlertType.INFORMATION,"Update Subject Success!!!").showAndWait();
@@ -306,7 +305,7 @@ public class SubjectFormController implements Initializable {
         }
 
         try {
-            SubjectDto dto = SubjectModel.searchSubject(id);
+            SubjectDto dto = subjectBO.searchSubject(id);
 
             if (dto != null) {
                 txtID.setText(dto.getId());
@@ -340,7 +339,7 @@ public class SubjectFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, SubjectTm, t1) -> {
                     try {
-                        SubjectDto dto = SubjectModel.searchSubject(t1.getSub_Id());
+                        SubjectDto dto = subjectBO.searchSubject(t1.getSub_Id());
 
                         if (dto != null) {
                             txtID.setText(dto.getId());

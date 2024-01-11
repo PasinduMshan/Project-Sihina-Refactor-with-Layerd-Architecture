@@ -6,7 +6,6 @@ import lk.ijse.ProjectSihina.entity.Exam;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ExamDAOImpl implements ExamDAO {
     @Override
@@ -43,7 +42,7 @@ public class ExamDAOImpl implements ExamDAO {
     }
 
     @Override
-    public List<Exam> getAll() throws SQLException {
+    public ArrayList<Exam> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Exam");
 
         ArrayList<Exam> examList = new ArrayList<>();

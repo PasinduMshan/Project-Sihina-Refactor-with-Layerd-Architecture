@@ -4,6 +4,7 @@ import lk.ijse.ProjectSihina.dao.CrudDAO;
 import lk.ijse.ProjectSihina.entity.Subject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface SubjectDAO extends CrudDAO<Subject> {
@@ -11,7 +12,7 @@ public interface SubjectDAO extends CrudDAO<Subject> {
 
     String getSubjectID(String subject) throws SQLException;
 
-    List<Subject> getAllSubjectName() throws SQLException;
+    ArrayList<Subject> getAllSubjectName() throws SQLException;
 
     String getSubjectName(String sub_Id) throws SQLException;
 

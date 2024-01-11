@@ -14,7 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import lk.ijse.ProjectSihina.model.ForgetPasswordModel;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.ForgetPasswordBO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -38,11 +39,15 @@ public class ForgetPasswordFormController {
 
     private String OTP;
 
+    ForgetPasswordBO forgetPasswordBO = (ForgetPasswordBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.FORGET_PASSWORD);
+
     @FXML
     void btnSubmitOnAction(ActionEvent event) throws IOException {
         String NIC = txtNIC.getText();
         String otpBox = txtOTPBox.getText();
+
         if (otpBox.equals(OTP)) {
+
             FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/view/Change_Credentials_Form.fxml"));
             Parent rootNode = loader.load();
             ChangeCredentialsFormController changeCredentialsFormController = loader.getController();
@@ -76,7 +81,7 @@ public class ForgetPasswordFormController {
         });
         try {
             String nic = txtNIC.getText();
-            String email = ForgetPasswordModel.getEmail(nic);
+            String email = forgetPasswordBO.getEmail(nic);
 
             if (email == null) {
                 new Alert(Alert.AlertType.ERROR,"Your NIC Not Found").showAndWait();

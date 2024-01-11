@@ -4,8 +4,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import lk.ijse.ProjectSihina.dao.SQLUtil;
 import lk.ijse.ProjectSihina.dao.custom.StudentDAO;
-import lk.ijse.ProjectSihina.db.DbConnection;
-import lk.ijse.ProjectSihina.dto.StudentDto;
 import lk.ijse.ProjectSihina.entity.Student;
 
 import javax.imageio.ImageIO;
@@ -90,7 +88,7 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public List<Student> getAll() throws SQLException {
+    public ArrayList<Student> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Stu_id,Name,Class,Email,Contact FROM Student");
 
         ArrayList<Student> studentsList = new ArrayList<>();
@@ -192,7 +190,7 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public List<String> getAllEmailsByClass(String stuClass) throws SQLException {
+    public ArrayList<String> getAllEmailsByClass(String stuClass) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Email FROM Student WHERE Class = ?", stuClass);
 
         ArrayList<String> EmailList = new ArrayList<>();
@@ -204,7 +202,7 @@ public class StudentDAOImpl implements StudentDAO {
     }
 
     @Override
-    public List<String> getAllEmail(String Student) throws SQLException {
+    public ArrayList<String> getAllEmail(String Student) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Email FROM Student");
 
         ArrayList<String> EmailList = new ArrayList<>();

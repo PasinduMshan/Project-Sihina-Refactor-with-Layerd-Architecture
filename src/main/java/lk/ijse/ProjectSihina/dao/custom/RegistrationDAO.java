@@ -6,5 +6,4 @@ import lk.ijse.ProjectSihina.entity.Registration;
 import java.sql.*;
 
 public interface RegistrationDAO extends CrudDAO<Registration> {
-    boolean saveDetailRegistration(Registration entity) throws SQLException;
 }

@@ -6,7 +6,7 @@ import lk.ijse.ProjectSihina.entity.Classes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 public class ClassDAOImpl implements ClassDAO {
     @Override
@@ -41,7 +41,7 @@ public class ClassDAOImpl implements ClassDAO {
     }
 
     @Override
-    public List<Classes> getAll() throws SQLException {
+    public ArrayList<Classes> getAll() throws SQLException {
         return null;
     }
 

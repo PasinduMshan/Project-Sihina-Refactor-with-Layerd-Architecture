@@ -5,12 +5,13 @@ import lk.ijse.ProjectSihina.entity.Query;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface QueryDAO extends SuperDAO {
-    List<Query> getAllClass() throws SQLException;
+    ArrayList<Query> getAllClass() throws SQLException;
 
-    List<Query> getTodaySchedule(LocalDate date) throws SQLException;
+    ArrayList<Query> getTodaySchedule(LocalDate date) throws SQLException;
 
-    List<Query> getTodayExams(LocalDate date) throws SQLException;
+    ArrayList<Query> getTodayExams(LocalDate date) throws SQLException;
 }

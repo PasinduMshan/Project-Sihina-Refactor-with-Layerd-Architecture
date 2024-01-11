@@ -11,7 +11,7 @@ import java.util.List;
 
 public class PaymentDAOImpl implements PaymentDAO {
     @Override
-    public List<Payment> searchStuPays(String id, String Month) throws SQLException {
+    public ArrayList<Payment> searchStuPays(String id, String Month) throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Pay_id, Subject , Amount  FROM Payment WHERE Stu_id = ? AND " +
                 "Pay_Month = ?", id, Month);
 
@@ -92,7 +92,7 @@ public class PaymentDAOImpl implements PaymentDAO {
     }
 
     @Override
-    public List<Payment> getAll() throws SQLException {
+    public ArrayList<Payment> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT Pay_id, Stu_Class, Subject, Pay_Month, Amount FROM Payment");
 
         ArrayList<Payment> paymentsList = new ArrayList<>();
@@ -111,7 +111,7 @@ public class PaymentDAOImpl implements PaymentDAO {
     }
 
     @Override
-    public List<Payment> getAllRegisterPayment(String type) throws SQLException {
+    public ArrayList<Payment> getAllRegisterPayment(String type) throws SQLException {
 
         ResultSet resultSet = SQLUtil.execute("SELECT Pay_id, Stu_id, Stu_Class, date, Amount FROM Payment WHERE " +
                 "Type = ? ORDER BY Pay_id DESC", type);

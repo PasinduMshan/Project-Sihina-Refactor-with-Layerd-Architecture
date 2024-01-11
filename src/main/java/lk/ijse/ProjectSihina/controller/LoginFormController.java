@@ -9,12 +9,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.User.UserConnection;
-import lk.ijse.ProjectSihina.model.LoginModel;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.LoginBO;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,7 +31,7 @@ public class LoginFormController implements Initializable {
     @FXML
     private JFXPasswordField txtPasswordField;
 
-    private LoginModel loginModel = new LoginModel();
+    LoginBO loginBO = (LoginBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.LOGIN);
 
     @FXML
     void btnLoginOnAction(ActionEvent event) throws IOException {
@@ -45,7 +45,8 @@ public class LoginFormController implements Initializable {
         }
 
         try {
-            boolean isLoginSuccess = loginModel.checkCredentials(userName , password);
+            boolean isLoginSuccess = loginBO.checkCredentials(userName , password);
+
             if (isLoginSuccess) {
                 showInfoAlert("Login Successful !!!", "Welcome, " + userName);
 

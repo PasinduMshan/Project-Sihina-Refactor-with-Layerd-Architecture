@@ -17,28 +17,24 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lk.ijse.ProjectSihina.Other.ArrowKeyPress;
 import lk.ijse.ProjectSihina.Other.Months;
+import lk.ijse.ProjectSihina.bo.BOFactory;
+import lk.ijse.ProjectSihina.bo.custom.AttendanceBO;
 import lk.ijse.ProjectSihina.dto.AttendantDto;
 import lk.ijse.ProjectSihina.dto.ClassDto;
 import lk.ijse.ProjectSihina.dto.SubjectDto;
 import lk.ijse.ProjectSihina.dto.Tm.AttendantTm;
-import lk.ijse.ProjectSihina.model.AttendantModel;
-import lk.ijse.ProjectSihina.model.ClassModel;
-import lk.ijse.ProjectSihina.model.PaymentModel;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -96,6 +92,8 @@ public class AttendanceFormController implements Initializable {
     @FXML
     private JFXTextField txtType;
 
+    AttendanceBO attendanceBO = (AttendanceBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ATTENDANCE);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         generateAttId();
@@ -122,8 +120,9 @@ public class AttendanceFormController implements Initializable {
 
     private void loadAllSubject() {
         ObservableList<String> obList = FXCollections.observableArrayList();
+
         try {
-            List<SubjectDto> SubList = PaymentModel.getAllSubject();
+            List<SubjectDto> SubList = attendanceBO.getAllSubject();
 
             for (SubjectDto dto : SubList) {
                 obList.add(dto.getSubject());
@@ -138,7 +137,7 @@ public class AttendanceFormController implements Initializable {
         ObservableList<String> obList = FXCollections.observableArrayList();
 
         try {
-            List<ClassDto> nameList = ClassModel.getAllClass();
+            List<ClassDto> nameList = attendanceBO.getAllClass();
 
             for (ClassDto dto : nameList) {
                 obList.add(dto.getClassName());
@@ -153,7 +152,6 @@ public class AttendanceFormController implements Initializable {
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), event -> updateTime()));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
-
         txtDate.setText(String.valueOf(LocalDate.now()));
     }
 
@@ -167,7 +165,7 @@ public class AttendanceFormController implements Initializable {
         ObservableList<AttendantTm> obList = FXCollections.observableArrayList();
 
         try {
-            List<AttendantDto> dtoList = AttendantModel.getAllAttendance();
+            List<AttendantDto> dtoList = attendanceBO.getAllAttendance();
 
             for (AttendantDto dto : dtoList) {
                 obList.add(new AttendantTm(
@@ -214,7 +212,8 @@ public class AttendanceFormController implements Initializable {
         AttendantDto dto = new AttendantDto(AttId, StuId, StuName, StuClass, Month, Subject, date, time,type);
 
         try {
-            boolean isAdd = AttendantModel.AddAttendant(dto);
+            boolean isAdd = attendanceBO.AddAttendant(dto);
+
             if (isAdd) {
                 new Alert(Alert.AlertType.INFORMATION,"Add Success!!!").show();
                 clearFields();
@@ -238,7 +237,8 @@ public class AttendanceFormController implements Initializable {
         }
 
         try {
-            boolean isDeleted = AttendantModel.deleteAttendant(AttId);
+            boolean isDeleted = attendanceBO.deleteAttendant(AttId);
+
             if (isDeleted) {
                 new Alert(Alert.AlertType.INFORMATION,"Delete Success!!!").showAndWait();
                 btnClearOnAction(event);
@@ -272,7 +272,8 @@ public class AttendanceFormController implements Initializable {
         AttendantDto dto = new AttendantDto(AttId, StuId, StuName, StuClass, Month, Subject, date, time,type);
 
         try {
-            boolean isAdd = AttendantModel.AddAttendant(dto);
+            boolean isAdd = attendanceBO.AddAttendant(dto);
+
             if (isAdd) {
                 new Alert(Alert.AlertType.INFORMATION,"Add Success!!!").show();
                 clearFields();
@@ -288,7 +289,7 @@ public class AttendanceFormController implements Initializable {
 
     private void generateAttId(){
         try {
-            String AttId = AttendantModel.generateNextAttId();
+            String AttId = attendanceBO.generateNextAttId();
             txtID.setText(AttId);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -305,7 +306,7 @@ public class AttendanceFormController implements Initializable {
         }
 
         try {
-            AttendantDto dto = AttendantModel.searchAttendant(AttId);
+            AttendantDto dto = attendanceBO.searchAttendant(AttId);
 
             if(dto != null) {
                 txtID.setText(dto.getAtt_id());
@@ -346,7 +347,8 @@ public class AttendanceFormController implements Initializable {
         AttendantDto dto = new AttendantDto(AttId, StuId, StuName, StuClass, Month, Subject, date, time,type);
 
         try {
-            boolean isUpdated = AttendantModel.UpdateAttendent(dto);
+            boolean isUpdated = attendanceBO.UpdateAttendant(dto);
+
             if (isUpdated) {
                 new Alert(Alert.AlertType.INFORMATION,"Update Success!!!").showAndWait();
                 btnClearOnAction(event);
@@ -404,7 +406,7 @@ public class AttendanceFormController implements Initializable {
             return;
         }
         try {
-            String StuName = AttendantModel.searctStudent(stuId);
+            String StuName = attendanceBO.searchStudent(stuId);
             txtStudentName.setText(StuName);
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
@@ -420,7 +422,7 @@ public class AttendanceFormController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observableValue, AttendantTm, t1) -> {
                     try {
-                        AttendantDto dto = AttendantModel.searchAttendant(t1.getAttendantId());
+                        AttendantDto dto = attendanceBO.searchAttendant(t1.getAttendantId());
                         if(dto != null) {
                             txtID.setText(dto.getAtt_id());
                             txtStuId.setText(dto.getStudentId());

@@ -74,7 +74,7 @@ public class AttendanceDAOImpl implements AttendanceDAO {
     }
 
     @Override
-    public List<Attendance> getAll() throws SQLException {
+    public ArrayList<Attendance> getAll() throws SQLException {
         ResultSet resultSet = SQLUtil.execute("SELECT * FROM Attendance");
 
         ArrayList<Attendance> attendanceList = new ArrayList<>();
