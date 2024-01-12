@@ -124,7 +124,7 @@ public class PaymentDAOImpl implements PaymentDAO {
                     resultSet.getString(2),
                     resultSet.getString(3),
                     resultSet.getDate(4).toLocalDate(),
-                    resultSet.getDouble(6)
+                    resultSet.getDouble(5)
             ));
         }
 

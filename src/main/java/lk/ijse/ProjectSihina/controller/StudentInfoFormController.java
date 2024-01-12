@@ -259,7 +259,7 @@ public class StudentInfoFormController implements Initializable {
             );
             JasperViewer.viewReport(jasperPrint, false);
         } catch (JRException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+           new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         }

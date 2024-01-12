@@ -77,20 +77,24 @@ public class RegistrationBOImpl implements RegistrationBO {
                     studentDto.getStu_Class(), studentDto.getSubject(), studentDto.getStudentImage(), userDAO.getUserID()));
 
             if (isSaved) {
+                System.out.println(1);
                 boolean isAddGuard = guardianDAO.save(new Guardian(guardianDto.getGuardId(), guardianDto.getName(),
                         guardianDto.getContact(), guardianDto.getEmail(), guardianDto.getOccupation(), guardianDto.getStuId()));
 
                 if (isAddGuard) {
+                    System.out.println(2);
                     boolean isAddPayment = paymentDAO.save(new Payment(payDto.getPayID(), payDto.getStuID(), payDto.getType(),
                             payDto.getStuClass(), payDto.getSubject(), payDto.getPayMonth(), payDto.getDate(), payDto.getTime(),
                             payDto.getAmount()));
 
                     if (isAddPayment) {
+                        System.out.println(3);
                         boolean isSaveRegistration = registrationDAO.save(new Registration(studentDto.getID(), payDto.getPayID(),
                                 studentDto.getName(), classDAO.getClassID(studentDto.getStu_Class()), payDto.getAmount(),
                                 payDto.getDate(), payDto.getTime()));
 
                         if (isSaveRegistration) {
+                            System.out.println(4);
                             connection.commit();
                             return true;
 
@@ -108,7 +112,8 @@ public class RegistrationBOImpl implements RegistrationBO {
             }
         } catch (SQLException e) {
             if (connection != null) connection.rollback();
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
+            throw new RuntimeException(e);
+           // new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
         } finally {
             if (connection != null) connection.setAutoCommit(true);
         }

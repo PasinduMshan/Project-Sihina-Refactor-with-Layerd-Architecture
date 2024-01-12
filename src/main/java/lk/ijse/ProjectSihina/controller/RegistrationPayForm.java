@@ -160,7 +160,8 @@ public class RegistrationPayForm implements Initializable {
             }
             tblPayment.setItems(obList);
         } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            //new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            throw new RuntimeException(e);
         }
     }
 
